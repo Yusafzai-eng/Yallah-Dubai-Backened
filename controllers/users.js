@@ -106,16 +106,39 @@ async function postget(req, res) {
       { expiresIn: "1h" }
     );
 
-    // Optional: Store session data
-    req.session.userId = user.id;
+//     // Optional: Store session data
+req.session.userId = user.id;
     req.session.userName = user.name;
     req.session.userEmail = user.email;
     req.session.cart = [];
 
+
+   console.log(req.session.userId);
+   console.log(user.id);
+   
+
+//  if (user && bcrypt.compareSync(req.body.password, user.password)) {
+//     req.session.userId = user._id.toString();  // store as string
+//     req.session.userName = user.name;
+//     req.session.userEmail = user.email;
+//     req.session.cart = [];
+//     console.log("Session set:", req.session);
+//     return res.status(200).json({ message: 'Login successful' });
+//   }
+
+
+
+    // Optional: Store session data
+    // req.session.userId = user.id;
+    // req.session.userName = user.name;
+    // req.session.userEmail = user.email;
+    // req.session.cart = [];
+   
+  
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,          // Use HTTPS in production
+      secure: false,          // Use HTTPS in production
       sameSite: "Strict",    // CSRF protection
       maxAge: 3600000        // 1 hour
     });
@@ -135,7 +158,21 @@ async function postget(req, res) {
     return res.status(500).json({ message: "An error occurred during login" });
   }
 }
+    //  new add add code
+function verifyToken(req, res) {
+  const token = req.cookies.token;
 
+  if (!token) {
+    return res.status(401).json({ message: "Token not found" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    return res.status(200).json({ message: "Token valid", user: decoded });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+}
 
 
 
@@ -202,14 +239,15 @@ async function postget(req, res) {
 // ============== post login function end ================
 
 // ============== Module Exports ================
-
 module.exports = {
   postauth,
   getlogin,
   getsignup,
   postsignup,
   postget,
+  verifyToken, // ✅ Add this line
 };
+
 
 
 

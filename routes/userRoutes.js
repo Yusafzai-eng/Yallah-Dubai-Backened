@@ -1,42 +1,26 @@
-
 const express = require("express");
-
 const app = express();
-
 const router = express.Router();
 
-// routes
-
-
-
-
-
-const { getlogin, getsignup } = require("../controllers/users");
-const { postauth, postsignup, postget } = require("../controllers/users");
-const { authJWTandRole, emailValidator, authenticateJWT, loginLimiter } = require("../middlewares/middlewares");
+// controllers
+const { getlogin, getsignup, postauth, postsignup, postget, verifyToken } = require("../controllers/users");
 const { postpersonal, getpersonal } = require("../controllers/personal");
 
-// signup get route
-router.get("/signup", getsignup);
+// middlewares
+const { authJWTandRole, emailValidator, authenticateJWT, loginLimiter } = require("../middlewares/middlewares");
 
-// login get route
+// routes
+router.get("/signup", getsignup);
 router.get("/login", getlogin);
 
-// get cart route 
-router.get('/api/cart', authJWTandRole("user") , getpersonal);
+// ✅ VERIFY TOKEN ROUTE ADDED HERE
+    //    new addded code
+router.get("/api/verify-token", verifyToken); // 👈 This is the main fix
 
-
-
-// post authUser route
+router.get('/api/cart', authJWTandRole("user"), getpersonal);
 router.post("/auth", authenticateJWT, postauth);
-
-// Signup post route
 router.post("/signup", emailValidator, postsignup);
-
-// login post route
 router.post("/login", loginLimiter, postget);
-
-// post cart route
-router.post('/api/cart', authJWTandRole("user"), postpersonal );
+router.post('/api/cart', authJWTandRole("user"), postpersonal);
 
 module.exports = router;

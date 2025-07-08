@@ -56,7 +56,7 @@ router.post('/api/productdetail', authJWTandRole("admin"), multipleUpload, admin
 //+
 router.post('/api/productupdate', authJWTandRole("admin"), multipleUpload, adminfunctions.postproductupdate);//+
 //+
-router.get('/api/deleteproduct', cors(corsOptions), adminfunctions.deleteproduct);//+
+router.delete('/api/deleteproduct/:id', cors(corsOptions), adminfunctions.deleteproduct);
 
 //+
 module.exports = router;//+

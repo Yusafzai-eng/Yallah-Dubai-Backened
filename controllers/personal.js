@@ -1,4 +1,3 @@
-// ============ User define imports Start ================
 
 const  Payment  = require("../models/payment");
 const Productes  = require("../models/productes");
@@ -7,51 +6,102 @@ const Productes  = require("../models/productes");
 // ============ User define imports end  ================
 
 // ============ post personal function Start ================
-
 async function postpersonal(req, res) {
   try {
-    const data = req.body;
+    const {
+      first_name,
+      last_name,
+      address,
+      payment_Method,
+      city,
+      state,
+      country,
+      name_On_Card,
+      card_Number,
+      zip,
+      expiry,
+      cvv,
+      date,
+      products
+    } = req.body;
 
-    // Validate cart and user session
-    const products = req.session.cart;
-    if (!products || products.length === 0) {
-      return res.status(400).json({ error: "Cart is empty." });
+    // Check if session data is available
+    if (!req.session.userId || !req.session.userName || !req.session.userEmail) {
+      return res.status(401).json({ message: "Unauthorized. User session missing." });
     }
 
-    const userId = req.session.userId;
-    const userName = req.session.userName;
-    const userEmail = req.session.userEmail;
-
-    const date = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-    const paymentData = {
-      products,
-      userId,
-      userName,
-      userEmail,
-      ...data,
+    const newPayment = {
+      userId: req.session.userId,
+      userName: req.session.userName,
+      userEmail: req.session.userEmail,
+      first_name,
+      last_name,
+      address,
+      payment_Method,
+      city,
+      state,
+      country,
+      name_On_Card,
+      card_Number,
+      zip,
+      expiry,
+      cvv,
       date,
+      products // ✅ contains full product detail from frontend
     };
 
-    // Insert the payment record
-    await Payment.create(paymentData);
-
-    // Clear the cart
-    req.session.cart = [];
-
-    // Redirect to the home page
-    res.redirect("/api/home");
-  } catch (err) {
-    console.error("Database insert error:", err);
-
-    if (err.name === "ValidationError") {
-      const validationErrors = Object.values(err.errors).map((error) => error.message);
-      return res.status(400).json({ errors: validationErrors });
-    }
-
-    res.status(500).json({ error: "An internal server error occurred." });
+    const saved = await Payment.create(newPayment);
+    res.status(201).json({ message: "Payment saved successfully", saved });
+  } catch (error) {
+    console.error("Error in postpersonal:", error);
+    res.status(500).json({ message: "Failed to save payment", error: error.message });
   }
 }
+
+// async function postpersonal(req, res) {
+//   try {
+//     const data = req.body;
+
+//     const products = req.body.products; // ✅ Angular se aane wale cart products
+//     if (!products || products.length === 0) {
+//       return res.status(400).json({ error: "Cart is empty." });
+//     }
+
+//     const userId = req.session?.id || null;
+//     const userName = req.session?.userName || "Unknown";
+//     const userEmail = req.session?.userEmail || "unknown@example.com";
+//    console.log(userId);
+//     const date = new Date().toLocaleDateString();
+//    console.log(date);
+
+//     const paymentData = {
+//       ...data,
+//       products,
+//       userId,
+//       userName,
+//       userEmail,
+//       date,
+//     };
+
+//     await Payment.create(paymentData);
+
+//     // Session cart clear karna zaroori nahi agar session use nahi ho raha
+//     // req.session.cart = [];
+
+//     res.status(200).json({ message: "Payment successful", success: true });
+//   } catch (err) {
+//     console.error("Database insert error:", err);
+
+//     if (err.name === "ValidationError") {
+//       const validationErrors = Object.values(err.errors).map((error) => error.message);
+//       return res.status(400).json({ errors: validationErrors });
+//     }
+
+//     res.status(500).json({ error: "An internal server error occurred." });
+//   }
+// }
+
+module.exports = { postpersonal };
 
 
 
@@ -70,7 +120,7 @@ async function getpersonal(req, res) {
     const order_date = req.query.check_out_date;
     const total_persones = adults_no + kids_no;
     try {
-      // Fetch the product details from the database
+      // Fetch the product details from the database  
       const products = await Productes.findById(productId);
       if (!products) {
         return res.status(404).json({ error: "Product not found" });
@@ -186,6 +236,5 @@ async function getpersonal(req, res) {
 
 module.exports = {
     postpersonal,
-    getpersonal
+    getpersonal
 };
-  
