@@ -60,7 +60,6 @@ async function getuserordersdetails(req, res) {
 
 module.exports = { getuserordersdetails };
 
-  
       
 
    const postproductcreat = async (req, res) => {
@@ -70,18 +69,19 @@ module.exports = { getuserordersdetails };
       citydescription,
       tourService,
       duration,
+      privateAdult,
+      privateChild,
       transportService,
+      private,
+      shared,
       pickUp,
       producttitle,
       discountPercentage,
-      discountedtotal,
-      price,
-      prime,
-      nonprime,
+      discountedTotal,
+      discountend,      
       privatetransferprice,
       quantity,
       productdescription,
-      privatetransferperson,
       categorie,
       adultBaseprice,
       kidsBaseprice,
@@ -94,8 +94,7 @@ module.exports = { getuserordersdetails };
 
     if (
       !cityName || !citydescription || !cityImage || !tourService || !duration || !transportService || !pickUp ||
-      !producttitle || !discountPercentage || !discountedtotal || !thumbnail || !price || !prime || !nonprime ||
-      !privatetransferprice || !quantity || !productdescription || !privatetransferperson || !categorie ||
+      !producttitle || !discountPercentage || !discountedTotal || !thumbnail || !discountend  || !quantity || !productdescription  || !categorie ||
       !adultBaseprice || !kidsBaseprice || !translatelanguage || !wifi
     ) {
       return res.status(400).json({ msg: "All fields are required" });
@@ -109,17 +108,18 @@ module.exports = { getuserordersdetails };
       duration,
       transportService,
       pickUp,
+     private,
+      shared,
       producttitle,
       discountPercentage,
-      discountedtotal,
+      discountedTotal,
       thumbnail,
-      price,
-      prime,
-      nonprime,
+      discountend,
+      privateAdult,
+      privateChild,
       privatetransferprice,
       quantity,
       productdescription,
-      privatetransferperson,
       categorie,
       adultBaseprice,
       kidsBaseprice,
@@ -136,51 +136,6 @@ module.exports = { getuserordersdetails };
   }
 };
 
-      // backened code
-// async function postproductcreat(req, res) {
-//       try {
-//         const { cityName, citydescription, tourService, duration, transportService, pickUp, producttitle, discountPercentage, discountedtotal,  price, prime, nonprime, privatetransferprice, quantity, productdescription, privatetransferperson, categorie, adultBaseprice, kidsBaseprice, translatelanguage, wifi } = req.body;
-//         console.log(res.body)
-//       const cityImage = req.files['cityImage'] ? req.files['cityImage'][0].filename : null;
-//     const thumbnail = req.files['thumbnail'] ? req.files['thumbnail'].map(file => file.filename) : [];
-
-    
-//         if (!cityName ||!citydescription ||!cityImage ||!tourService ||!duration ||!transportService ||!pickUp ||!producttitle ||!discountPercentage ||!discountedtotal ||!thumbnail ||!price ||!prime ||!nonprime ||!privatetransferprice ||!quantity ||!productdescription ||!privatetransferperson ||!categorie ||!adultBaseprice ||!kidsBaseprice ||!translatelanguage ||!wifi) {
-//           return res.status(400).json({ msg: "All fields are required" });
-//         }
-    
-    
-//         const product = await Productes.create({
-//           cityName,
-//           citydescription,
-//           cityImage, 
-//           tourService, 
-//           duration, 
-//           transportService, 
-//           pickUp, 
-//           producttitle, 
-//           discountPercentage, 
-//           discountedtotal, 
-//           thumbnail, 
-//           price, 
-//           prime, 
-//           nonprime, 
-//           privatetransferprice, 
-//           quantity, 
-//           productdescription, 
-//           privatetransferperson,
-//           categorie,
-//           adultBaseprice,
-//           kidsBaseprice,
-//           translatelanguage,
-//           wifi,
-//         });
-//         res.status(200);
-//       } catch (error) {
-//         console.error(error);
-//         res.status(500).send("Server Error");
-//       }
-//     }
 
 
 
@@ -195,6 +150,16 @@ module.exports = { getuserordersdetails };
         res.status(500).send(error.message);
       }
     }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -232,97 +197,266 @@ function deleteproduct(req, res) {
     // }
 
 
-   async function postproductupdate(req, res) {
+
+
+
+
+async function postproductupdate(req, res) {
   try {
     const productId = req.query._id;
     if (!productId) {
       return res.status(400).json({ message: "Invalid product id" });
     }
 
-    // Extract all fields from the form data
-    const { 
-      cityName, citydescription, tourService, duration, transportService, 
-      pickUp, producttitle, discountPercentage, discountedtotal, price, 
-      prime, nonprime, privatetransferprice, quantity, productdescription, 
-      privatetransferperson, categorie, adultBaseprice, kidsBaseprice, 
-      translatelanguage, wifi, existingCityImage, existingThumbnails
-    } = req.body;
+    // Improved private flag parsing
+    const isPrivate = req.body.private === 'true' || req.body.private === true;
 
-    let cityImage = req.body.cityImage || "";
-    let thumbnail = req.body.thumbnail || [];
+    // Base update data
+    const updateData = {
+      cityName: req.body.cityName,
+      citydescription: req.body.citydescription,
+      tourService: req.body.tourService,
+      duration: req.body.duration,
+      transportService: req.body.transportService,
+      pickUp: req.body.pickUp,
+      producttitle: req.body.producttitle,
+      discountPercentage: req.body.discountPercentage,
+      discountedTotal: req.body.discountedTotal || req.body.discountedtotal,
+      quantity: req.body.quantity,
+      productdescription: req.body.productdescription,
+      categorie: req.body.categorie,
+      adultBaseprice: req.body.adultBaseprice,
+      kidsBaseprice: req.body.kidsBaseprice,
+      translatelanguage: req.body.translatelanguage,
+      wifi: req.body.wifi,
+      privatetransferperson: req.body.privatetransferperson,
+      private: isPrivate
+    };
+
+    // Improved private fields handling
+    if (isPrivate) {
+      updateData.privateAdult = req.body.privateAdult ? 
+        parseFloat(req.body.privateAdult) : 
+        (req.body.privateAdult === '' ? null : updateData.privateAdult);
+      
+      updateData.privateChild = req.body.privateChild ? 
+        parseFloat(req.body.privateChild) : 
+        (req.body.privateChild === '' ? null : updateData.privateChild);
+      
+      updateData.privatetransferprice = req.body.privatetransferprice ? 
+        parseFloat(req.body.privatetransferprice) : 
+        (req.body.privatetransferprice === '' ? null : updateData.privatetransferprice);
+    } else {
+      // Explicitly set to null if not private
+      updateData.privateAdult = null;
+      updateData.privateChild = null;
+      updateData.privatetransferprice = null;
+    }
+
+    // Debug logging for private fields
+    console.log('Private fields update:', {
+      isPrivate,
+      privateAdult: updateData.privateAdult,
+      privateChild: updateData.privateChild,
+      privatetransferprice: updateData.privatetransferprice
+    });
 
     // Handle file uploads
     if (req.files) {
-      // Process city image
-      if (req.files.cityImage) {
-        cityImage = req.files.cityImage[0].filename;
-      }
-
-      // Process thumbnails
-      if (req.files.thumbnail) {
-        thumbnail = req.files.thumbnail.map(file => file.filename);
-      }
-    }
-
-    // Delete old files if new ones are uploaded
-    try {
-      if (existingCityImage && req.files?.cityImage) {
-        await fs.unlink(`./uploads/${existingCityImage}`);
-      }
-
-      if (existingThumbnails && req.files?.thumbnail) {
-        for (const oldThumbnail of existingThumbnails) {
-          await fs.unlink(`./uploads/${oldThumbnail}`);
+      // City image handling
+      if (req.files.cityImage?.length > 0) {
+        updateData.cityImage = req.files.cityImage[0].filename;
+        if (req.body.existingCityImage) {
+          await fs.unlink(`./uploads/${req.body.existingCityImage}`).catch(() => {});
         }
+      } else {
+        updateData.cityImage = req.body.cityImage || req.body.existingCityImage;
       }
-    } catch (error) {
-      console.error('Error deleting old files:', error);
+
+      // Thumbnails handling
+      const existingThumbs = req.body.existingThumbnails 
+        ? (Array.isArray(req.body.existingThumbnails) 
+            ? req.body.existingThumbnails 
+            : [req.body.existingThumbnails])
+        : [];
+
+      if (req.files.thumbnail?.length > 0) {
+        updateData.thumbnail = [...existingThumbs, ...req.files.thumbnail.map(f => f.filename)];
+      } else {
+        updateData.thumbnail = existingThumbs;
+      }
+    } else {
+      updateData.cityImage = req.body.cityImage || req.body.existingCityImage;
+      updateData.thumbnail = req.body.existingThumbnails 
+        ? (Array.isArray(req.body.existingThumbnails) 
+            ? req.body.existingThumbnails 
+            : [req.body.existingThumbnails])
+        : [];
     }
 
-    const updateData = {
-      cityName,
-      citydescription,
-      cityImage,
-      tourService,
-      duration,
-      transportService,
-      pickUp,
-      producttitle,
-      discountPercentage,
-      discountedtotal,
-      thumbnail,
-      price,
-      prime,
-      nonprime,
-      privatetransferprice,
-      quantity,
-      productdescription,
-      privatetransferperson,
-      categorie,
-      adultBaseprice,
-      kidsBaseprice,
-      translatelanguage,
-      wifi
-    };
-
-    const product = await Productes.findByIdAndUpdate(
+    const updated = await Productes.findByIdAndUpdate(
       productId, 
-      updateData, 
-      { new: true }
+      { $set: updateData }, // Use $set operator to ensure partial updates
+      { new: true, runValidators: true } // Run schema validators
     );
 
-    res.status(200).json({ 
-      message: "Product updated successfully", 
-      product 
+    if (!updated) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({
+      message: "✅ Product updated successfully",
+      product: updated
     });
   } catch (error) {
-    console.error('Update error:', error);
-    res.status(500).json({ 
+    console.error('❌ Update error:', error);
+    res.status(500).json({
       message: "Server error",
-      error: error.message 
+      error: error.message
     });
   }
 }
+
+
+module.exports = { postproductupdate };
+
+
+
+   //admin delete user order detials
+async function deleteOrderProduct(req, res) {
+  const paymentId = req.params.paymentId; // Order ID
+  const productIdToDelete = req.params.productId; // Product ID
+
+  try {
+    const payment = await Payment.findById(paymentId);
+
+    if (!payment) {
+      return res.status(404).json({ message: "Payment (Order) not found" });
+    }
+
+    // ✅ If no products, delete the order
+    if (!payment.products || payment.products.length === 0) {
+      const deleted = await Payment.findByIdAndDelete(paymentId);
+      if (!deleted) {
+        return res.status(404).json({ message: "Order not found or already deleted" });
+      }
+      return res.status(200).json({ message: "Order had no products, so it was deleted" });
+    }
+
+    // ✅ Find product index
+    const productIndex = payment.products.findIndex(
+      (product) => product._id.toString() === productIdToDelete
+    );
+
+    // ✅ If product not found, delete order
+    if (productIndex === -1) {
+      await Payment.findByIdAndDelete(paymentId);
+      return res.status(200).json({ message: "Product not found, so order deleted" });
+    }
+
+    // ✅ Remove product and update total
+    const productTotal = payment.products[productIndex].total || 0;
+    payment.products.splice(productIndex, 1);
+    if (payment.total) {
+      payment.total -= productTotal;
+    }
+
+    // ✅ If no products left after deletion, delete the order
+    if (payment.products.length === 0) {
+      await Payment.findByIdAndDelete(paymentId);
+      return res.status(200).json({ message: "Last product removed, so order deleted" });
+    }
+
+    // ✅ Otherwise save the updated order
+    await payment.save();
+
+    return res.status(200).json({
+      message: "Product deleted and total updated successfully",
+      payment,
+    });
+
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+
+
+async function updateOrderProduct(req, res) {
+const paymentId = req.params.orderId;
+  const productIdToUpdate = req.params.productId; 
+  const updatedProductData = req.body;
+
+  // Debugging: Log incoming request details
+  console.log('⏩ Incoming Update Request:');
+  console.log('Payment (Order) ID:', paymentId);
+  console.log('Product ID to Update:', productIdToUpdate);
+  console.log('Updated Data:', updatedProductData);
+
+  try {
+    const payment = await Payment.findById(paymentId);
+
+    if (!payment) {
+      console.log('❌ Payment not found with ID:', paymentId);
+      return res.status(404).json({ message: "Payment (Order) not found" });
+    }
+
+    // Debugging: Log found payment
+    console.log('✅ Found Payment:', payment._id);
+    console.log('Products in this payment:', payment.products.map(p => p._id));
+
+    // Find product index in array
+    const productIndex = payment.products.findIndex(
+      (product) => product._id.toString() === productIdToUpdate
+    );
+
+    if (productIndex === -1) {
+      console.log('❌ Product not found in order. Product ID:', productIdToUpdate);
+      console.log('Available Product IDs:', payment.products.map(p => p._id));
+      return res.status(404).json({ message: "Product not found in order" });
+    }
+
+    // Debugging: Log product being updated
+    console.log('🔄 Product to update (before changes):', payment.products[productIndex]);
+
+    // Store old total
+    const oldProductTotal = payment.products[productIndex].total;
+    console.log('💰 Old Product Total:', oldProductTotal);
+
+    // Update product fields from request body
+    const product = payment.products[productIndex];
+    for (let key in updatedProductData) {
+      if (product[key] !== undefined) {
+        console.log(`Updating field ${key}: ${product[key]} → ${updatedProductData[key]}`);
+        product[key] = updatedProductData[key];
+      }
+    }
+
+    // Update payment total
+    const newProductTotal = product.total;
+    console.log('💰 New Product Total:', newProductTotal);
+    payment.total = payment.total - oldProductTotal + newProductTotal;
+    console.log('🔢 Updated Payment Total:', payment.total);
+
+    // Save updated document
+    await payment.save();
+
+    console.log('✅ Update successful for product:', product._id);
+    res.status(200).json({ 
+      message: "Product updated and total recalculated", 
+      payment 
+    });
+  } catch (error) {
+    console.error("🔥 Error updating product:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+
+
 
 module.exports ={
     getuserordersdetails,
@@ -332,5 +466,7 @@ module.exports ={
    deleteproduct,
    postproductupdate,
    getadminproductadd,
-   getadminproductupdate
+   getadminproductupdate,
+   deleteOrderProduct,
+   updateOrderProduct,
 } ;
