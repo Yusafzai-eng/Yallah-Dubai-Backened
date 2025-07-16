@@ -16,6 +16,7 @@ const productSchema = new mongoose.Schema({
   pickUp: String,
   price: Number,
   discountedTotal: Number,
+  discountPercentage: Number,
   adultBaseprice: Number,
   kidsBaseprice: Number,
   quantity: Number,
@@ -25,20 +26,30 @@ const productSchema = new mongoose.Schema({
   wifi: String,
   adults_no: {
     type: Number,
-    required: true
+  },
+  transfertype: {
+    type: String,
   },
   kids_no: {
-    type: Number,
-    required: true
+    type: Number, 
   },
   total: {
     type: Number,
-    required: true
   },
   order_date: {
     type: String,
     required: true
-  }
+  },
+    privateAdult: {
+    type: Number,
+    
+  },
+    privateChild: {
+    type: Number,
+  },
+   privatetransferprice:{
+    type: Number,
+  },
 });
 
 const paymentschema = new mongoose.Schema({
@@ -110,17 +121,15 @@ const paymentschema = new mongoose.Schema({
     type: String, 
     required: true 
   },
-
   cvv: { 
     type: String, 
     required: true 
   },
-
   date: { 
     type: String, 
     required: true 
   }
-});
+}, { timestamps: true });
 
 const Payment = mongoose.model("Payment", paymentschema);
 module.exports = Payment;

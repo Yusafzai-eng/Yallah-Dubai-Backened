@@ -40,8 +40,8 @@ const productSchema = new mongoose.Schema({
     type:String,
     required: true
   },
-  price: {
-    type: Number,
+  discountend: {
+    type: Date,
     required: true
   },
   quantity: {
@@ -52,9 +52,25 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  discountedTotal: { type: Number, default: function() {
-    return this.price * 0.8;  // Assuming a default discount of 20%
-  }},
+  private: {
+    type: Boolean,
+  },
+  shared:{
+    type:  Boolean,
+
+  },
+  
+    privateAdult: {
+    type: Number,
+    
+  },
+    privateChild: {
+    type: Number,
+  },
+  discountedTotal: {
+     type: Number,
+     required: true,
+    },
   thumbnail: {
     type: [String],
     required: true,
@@ -76,21 +92,8 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  prime:{
-    type: Number,
-    required: true
-  },
-  nonprime:{
-    type: Number,
-    required: true
-  },
   privatetransferprice:{
     type: Number,
-    required: true
-  },
-  privatetransferperson:{
-    type: Number,
-    required: true
   },
   categorie:{
     type: String,
@@ -104,7 +107,8 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-});
+
+}, { timestamps: true });
 
 const Productes = mongoose.model("Product", productSchema);
 module.exports = Productes;

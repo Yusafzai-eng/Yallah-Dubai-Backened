@@ -385,11 +385,11 @@ async function deleteOrderProduct(req, res) {
 
 
 async function updateOrderProduct(req, res) {
-const paymentId = req.params.orderId;
-  const productIdToUpdate = req.params.productId; 
+  const paymentId = req.params.orderId;
+  const productIdToUpdate = req.params.productId;
   const updatedProductData = req.body;
 
-  // Debugging: Log incoming request details
+  // 🔍 Log incoming request details
   console.log('⏩ Incoming Update Request:');
   console.log('Payment (Order) ID:', paymentId);
   console.log('Product ID to Update:', productIdToUpdate);
@@ -403,56 +403,56 @@ const paymentId = req.params.orderId;
       return res.status(404).json({ message: "Payment (Order) not found" });
     }
 
-    // Debugging: Log found payment
+    // ✅ Log found payment
     console.log('✅ Found Payment:', payment._id);
     console.log('Products in this payment:', payment.products.map(p => p._id));
 
-    // Find product index in array
+    // 🔍 Find product index
     const productIndex = payment.products.findIndex(
       (product) => product._id.toString() === productIdToUpdate
     );
 
     if (productIndex === -1) {
       console.log('❌ Product not found in order. Product ID:', productIdToUpdate);
-      console.log('Available Product IDs:', payment.products.map(p => p._id));
       return res.status(404).json({ message: "Product not found in order" });
     }
 
-    // Debugging: Log product being updated
-    console.log('🔄 Product to update (before changes):', payment.products[productIndex]);
+    // 🔁 Reference to product
+    const product = payment.products[productIndex];
 
-    // Store old total
-    const oldProductTotal = payment.products[productIndex].total;
+    console.log('🔄 Product before update:', product);
+
+    // 🧮 Store old total
+    const oldProductTotal = product.total ?? 0;
     console.log('💰 Old Product Total:', oldProductTotal);
 
-    // Update product fields from request body
-    const product = payment.products[productIndex];
+    // 🔧 Update product with all incoming fields (even if they didn't exist before)
     for (let key in updatedProductData) {
-      if (product[key] !== undefined) {
-        console.log(`Updating field ${key}: ${product[key]} → ${updatedProductData[key]}`);
-        product[key] = updatedProductData[key];
-      }
+      console.log(`✏️ Updating ${key}: ${product[key]} → ${updatedProductData[key]}`);
+      product[key] = updatedProductData[key];
     }
 
-    // Update payment total
-    const newProductTotal = product.total;
+    // 🧮 Update payment total
+    const newProductTotal = product.total ?? 0;
+    payment.total = (payment.total ?? 0) - oldProductTotal + newProductTotal;
     console.log('💰 New Product Total:', newProductTotal);
-    payment.total = payment.total - oldProductTotal + newProductTotal;
     console.log('🔢 Updated Payment Total:', payment.total);
 
-    // Save updated document
+    // 💾 Save changes
     await payment.save();
 
     console.log('✅ Update successful for product:', product._id);
-    res.status(200).json({ 
-      message: "Product updated and total recalculated", 
-      payment 
+    res.status(200).json({
+      message: "Product updated and total recalculated",
+      payment
     });
+
   } catch (error) {
     console.error("🔥 Error updating product:", error);
     res.status(500).json({ message: "Server error" });
   }
 }
+
 
 
 

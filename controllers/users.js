@@ -113,8 +113,8 @@ req.session.userId = user.id;
     req.session.cart = [];
 
 
-   console.log(req.session.userId);
-   console.log(user.id);
+  //  console.log(req.session.userId);
+  //  console.log(user.id);
    
 
 //  if (user && bcrypt.compareSync(req.body.password, user.password)) {

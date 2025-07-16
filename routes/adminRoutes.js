@@ -59,6 +59,16 @@ router.post('/api/productupdate', authJWTandRole("admin"), multipleUpload, admin
 router.delete('/api/deleteproduct/:id', cors(corsOptions), adminfunctions.deleteproduct);
 
 //+
+router.delete('/api/deleteOrderProduct/:paymentId/:productId', cors(corsOptions), adminfunctions.deleteOrderProduct);
+
+// Change backend route to use orderId
+router.patch('/api/updateOrderProduct/:orderId/:productId', cors(corsOptions), adminfunctions.updateOrderProduct);
+
+
+
+
+
+
 module.exports = router;//+
 
 
