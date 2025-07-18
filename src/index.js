@@ -70,9 +70,9 @@ app.use(session( {
   secret: process.env.SESSIONS_SECRT_KEY || 'fallback_secret',
   name: "my-custom-product-session-id",
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
     secure: false,
   },

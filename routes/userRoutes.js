@@ -17,7 +17,7 @@ router.get("/login", getlogin);
     //    new addded code
 router.get("/api/verify-token", verifyToken); // 👈 This is the main fix
 
-router.get('/api/cart', authJWTandRole("user"), getpersonal);
+router.get('/api/booknow', authJWTandRole("user"), getpersonal);
 router.post("/auth", authenticateJWT, postauth);
 router.post("/signup", emailValidator, postsignup);
 router.post("/login", loginLimiter, postget);

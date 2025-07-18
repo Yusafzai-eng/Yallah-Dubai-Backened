@@ -52,7 +52,6 @@ function getsignup(req, res) {
 
 async function postsignup(req, res) {
   try {
-    // Create user data from request body
     const data = {
       name: req.body.username,
       email: req.body.email,
@@ -60,17 +59,16 @@ async function postsignup(req, res) {
       role: "user",
     };
 
-    //  exist user 
     const existuser = await collection.findOne({ email: data.email });
 
     if (existuser != null) {
-      return res.status(409) // 409 means conflict
+      return res.status(409).json({ message: "Email already exists" });  // ✅ Proper response
     } else {
-      // hash the password
       const hashpasword = await bcrypt.hash(data.password, 10);
       data.password = hashpasword;
       await collection.insertMany(data);
-      res.status(200);
+
+      return res.status(200).json({ message: "Signup successful" });  // ✅ Respond with JSON
     }
   } catch (error) {
     console.error(error);
@@ -107,11 +105,19 @@ async function postget(req, res) {
     );
 
 //     // Optional: Store session data
-req.session.userId = user.id;
-    req.session.userName = user.name;
-    req.session.userEmail = user.email;
-    req.session.cart = [];
+// req.session.userId = user.id;
+//     req.session.userName = user.name;
+//     req.session.userEmail = user.email;
+//     req.session.cart = [];
 
+
+    let sessionAlreadyExists = req.session.userId !== undefined;
+    if (!sessionAlreadyExists) {
+      req.session.userId = user.id;
+      req.session.userName = user.name;
+      req.session.userEmail = user.email;
+      req.session.cart = [];
+    }
 
   //  console.log(req.session.userId);
   //  console.log(user.id);
@@ -158,7 +164,6 @@ req.session.userId = user.id;
     return res.status(500).json({ message: "An error occurred during login" });
   }
 }
-    //  new add add code
 function verifyToken(req, res) {
   const token = req.cookies.token;
 
@@ -168,11 +173,23 @@ function verifyToken(req, res) {
 
   try {
     const decoded = jwt.verify(token, secretKey);
-    return res.status(200).json({ message: "Token valid", user: decoded });
+
+    // decoded ke andar role hona chahiye
+    if (!decoded.role) {
+      return res.status(403).json({ message: "Role not defined in token" });
+    }
+
+    return res.status(200).json({ 
+      message: "Token valid", 
+      role: decoded.role,      // 👈 Frontend authGuard ko yeh chahiye
+      user: decoded 
+    });
+
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
 }
+
 
 
 
