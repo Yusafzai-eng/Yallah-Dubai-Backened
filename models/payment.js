@@ -36,19 +36,20 @@ const productSchema = new mongoose.Schema({
   total: {
     type: Number,
   },
-  order_date: {
-    type: String,
-    required: true
+order_date: {
+  type: String,
+  required: true,
+},
+
+  privateAdult: {
+  type: Number,
+
   },
-    privateAdult: {
-    type: Number,
-    
+  privateChild: {
+  type: Number,
   },
-    privateChild: {
-    type: Number,
-  },
-   privatetransferprice:{
-    type: Number,
+  privatetransferprice:{
+  type: Number,
   },
 });
 
@@ -125,10 +126,10 @@ const paymentschema = new mongoose.Schema({
     type: String, 
     required: true 
   },
-  date: { 
-    type: String, 
-    required: true 
-  }
+  // date: { 
+  //   type: String, 
+  //   required: true 
+  // }
 }, { timestamps: true });
 
 const Payment = mongoose.model("Payment", paymentschema);

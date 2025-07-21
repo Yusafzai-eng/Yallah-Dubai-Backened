@@ -389,11 +389,11 @@ async function updateOrderProduct(req, res) {
   const productIdToUpdate = req.params.productId;
   const updatedProductData = req.body;
 
-  // 🔍 Log incoming request details
-  console.log('⏩ Incoming Update Request:');
-  console.log('Payment (Order) ID:', paymentId);
-  console.log('Product ID to Update:', productIdToUpdate);
-  console.log('Updated Data:', updatedProductData);
+  // // 🔍 Log incoming request details
+  // console.log('⏩ Incoming Update Request:');
+  // console.log('Payment (Order) ID:', paymentId);
+  // console.log('Product ID to Update:', productIdToUpdate);
+  // console.log('Updated Data:', updatedProductData);
 
   try {
     const payment = await Payment.findById(paymentId);
@@ -403,9 +403,9 @@ async function updateOrderProduct(req, res) {
       return res.status(404).json({ message: "Payment (Order) not found" });
     }
 
-    // ✅ Log found payment
-    console.log('✅ Found Payment:', payment._id);
-    console.log('Products in this payment:', payment.products.map(p => p._id));
+    // // ✅ Log found payment
+    // console.log('✅ Found Payment:', payment._id);
+    // console.log('Products in this payment:', payment.products.map(p => p._id));
 
     // 🔍 Find product index
     const productIndex = payment.products.findIndex(
@@ -420,11 +420,11 @@ async function updateOrderProduct(req, res) {
     // 🔁 Reference to product
     const product = payment.products[productIndex];
 
-    console.log('🔄 Product before update:', product);
+    // console.log('🔄 Product before update:', product);
 
     // 🧮 Store old total
     const oldProductTotal = product.total ?? 0;
-    console.log('💰 Old Product Total:', oldProductTotal);
+    // console.log('💰 Old Product Total:', oldProductTotal);
 
     // 🔧 Update product with all incoming fields (even if they didn't exist before)
     for (let key in updatedProductData) {
@@ -435,20 +435,20 @@ async function updateOrderProduct(req, res) {
     // 🧮 Update payment total
     const newProductTotal = product.total ?? 0;
     payment.total = (payment.total ?? 0) - oldProductTotal + newProductTotal;
-    console.log('💰 New Product Total:', newProductTotal);
-    console.log('🔢 Updated Payment Total:', payment.total);
+    // console.log('💰 New Product Total:', newProductTotal);
+    // console.log('🔢 Updated Payment Total:', payment.total);
 
     // 💾 Save changes
     await payment.save();
 
-    console.log('✅ Update successful for product:', product._id);
+    // console.log('✅ Update successful for product:', product._id);
     res.status(200).json({
       message: "Product updated and total recalculated",
       payment
     });
 
   } catch (error) {
-    console.error("🔥 Error updating product:", error);
+    // console.error("🔥 Error updating product:", error);
     res.status(500).json({ message: "Server error" });
   }
 }

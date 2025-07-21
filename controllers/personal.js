@@ -51,7 +51,7 @@ async function postpersonal(req, res) {
     };
 
     const saved = await Payment.create(newPayment);
-    req.session.destroy(); // Clear the session
+    req.session.cart = [];
     res.status(201).json({ message: "Payment saved successfully", saved });
   } catch (error) {
     console.error("Error in postpersonal:", error);
@@ -100,7 +100,7 @@ async function getpersonal(req, res) {
       return d1.getTime() === d2.getTime();
     }
 
-    // ✅ NEW: PRIVATE TRANSFER check
+    // ✅ Check: PRIVATE transfer already booked
     if (transfertype === "Private") {
       const isAlreadyPrivateBooked = payments.some(payment =>
         payment.products.some(product =>
@@ -111,18 +111,18 @@ async function getpersonal(req, res) {
       );
 
       if (isAlreadyPrivateBooked) {
-        return res.json({
-          status: 409,
+        return res.status(409).json({
           message: "Private transfer already booked for this date.",
         });
       }
     }
 
-    // ✅ SHARED TRANSFER quantity check
+    // ✅ Check: SHARED transfer quantity available
     if (transfertype !== "Private") {
       payments.forEach(payment => {
         payment.products.forEach(product => {
-          if (areDatesEqual(product.order_date, order_date) && product.productId === productId) {
+          if (areDatesEqual(product.order_date, order_date) &&
+              product.productId === productId) {
             totalAdults += product.adults_no || 0;
             totalKids += product.kids_no || 0;
           }
@@ -133,18 +133,19 @@ async function getpersonal(req, res) {
 
       if (product_Quantity < totalBookedPersons + total_persones) {
         const value = product_Quantity - totalBookedPersons;
-        return res.json({
-          status: 409,
+        return res.status(409).json({
           value,
           message: "Not enough quantity available for selected date.",
         });
       }
     }
 
+    // ✅ Prepare product data
     const product = {
       id: products._id,
       cityName: products.cityName,
       citydescription: products.citydescription,
+      cityImage: products.cityImage,
       tourService: products.tourService,
       duration: products.duration,
       privateAdult: products.privateAdult,
@@ -160,12 +161,14 @@ async function getpersonal(req, res) {
       quantity: products.quantity,
       productdescription: products.productdescription,
       categorie: products.categorie,
+      thumbnail: products.thumbnail,
       adultBaseprice: products.adultBaseprice,
       kidsBaseprice: products.kidsBaseprice,
       translatelanguage: products.translatelanguage,
       wifi: products.wifi,
     };
 
+    // ✅ Create cart item
     const cartItem = {
       productId,
       transfertype,
@@ -179,6 +182,7 @@ async function getpersonal(req, res) {
       ...product,
     };
 
+    // ✅ Add to session cart
     if (!req.session.cart) {
       req.session.cart = [];
     }
@@ -191,12 +195,15 @@ async function getpersonal(req, res) {
       req.session.cart[itemIndex] = cartItem;
     }
 
-    res.json({ status: 200, cart: req.session.cart });
+    // ✅ Respond success
+    res.status(200).json({ status: 200, cart: req.session.cart });
+
   } catch (error) {
     console.error("Error fetching product data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
 
   
 
