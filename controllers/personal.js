@@ -1,7 +1,5 @@
-
-const  Payment  = require("../models/payment");
-const Productes  = require("../models/productes");
-
+const Payment = require("../models/payment");
+const Productes = require("../models/productes");
 
 // ============ User define imports end  ================
 
@@ -22,12 +20,18 @@ async function postpersonal(req, res) {
       expiry,
       cvv,
       date,
-      products
+      products,
     } = req.body;
 
     // Check if session data is available
-    if (!req.session.userId || !req.session.userName || !req.session.userEmail) {
-      return res.status(401).json({ message: "Unauthorized. User session missing." });
+    if (
+      !req.session.userId ||
+      !req.session.userName ||
+      !req.session.userEmail
+    ) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized. User session missing." });
     }
 
     const newPayment = {
@@ -47,7 +51,7 @@ async function postpersonal(req, res) {
       expiry,
       cvv,
       date,
-      products // ✅ contains full product detail from frontend
+      products, // ✅ contains full product detail from frontend
     };
 
     const saved = await Payment.create(newPayment);
@@ -55,16 +59,13 @@ async function postpersonal(req, res) {
     res.status(201).json({ message: "Payment saved successfully", saved });
   } catch (error) {
     console.error("Error in postpersonal:", error);
-    res.status(500).json({ message: "Failed to save payment", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to save payment", error: error.message });
   }
 }
 
-
-
 module.exports = { postpersonal };
-
-
-
 
 // ============ get personal function Start ================
 
@@ -102,11 +103,12 @@ async function getpersonal(req, res) {
 
     // ✅ Check: PRIVATE transfer already booked
     if (transfertype === "Private") {
-      const isAlreadyPrivateBooked = payments.some(payment =>
-        payment.products.some(product =>
-          areDatesEqual(product.order_date, order_date) &&
-          product.productId === productId &&
-          product.transfertype === "Private"
+      const isAlreadyPrivateBooked = payments.some((payment) =>
+        payment.products.some(
+          (product) =>
+            areDatesEqual(product.order_date, order_date) &&
+            product.productId === productId &&
+            product.transfertype === "Private"
         )
       );
 
@@ -119,10 +121,12 @@ async function getpersonal(req, res) {
 
     // ✅ Check: SHARED transfer quantity available
     if (transfertype !== "Private") {
-      payments.forEach(payment => {
-        payment.products.forEach(product => {
-          if (areDatesEqual(product.order_date, order_date) &&
-              product.productId === productId) {
+      payments.forEach((payment) => {
+        payment.products.forEach((product) => {
+          if (
+            areDatesEqual(product.order_date, order_date) &&
+            product.productId === productId
+          ) {
             totalAdults += product.adults_no || 0;
             totalKids += product.kids_no || 0;
           }
@@ -187,7 +191,9 @@ async function getpersonal(req, res) {
       req.session.cart = [];
     }
 
-    const itemIndex = req.session.cart.findIndex(item => item.productId === productId);
+    const itemIndex = req.session.cart.findIndex(
+      (item) => item.productId === productId
+    );
 
     if (itemIndex === -1) {
       req.session.cart.push(cartItem);
@@ -197,21 +203,17 @@ async function getpersonal(req, res) {
 
     // ✅ Respond success
     res.status(200).json({ status: 200, cart: req.session.cart });
-
   } catch (error) {
     console.error("Error fetching product data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
 
-
-  
-
 // ============ get personal function end ================
 
 // ============== Module Exports ================
 
 module.exports = {
-    postpersonal,
-    getpersonal
+  postpersonal,
+  getpersonal,
 };
