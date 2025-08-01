@@ -726,47 +726,6 @@
 },
 {
   "_id": {
-    "$oid": "687780e72f9c846d3223e497"
-  },
-  "cityName": "qqqqqqqqqqqqqqq",
-  "citydescription": "enjdenj",
-  "cityImage": "1752670740276.jpeg",
-  "tourService": "Daily",
-  "duration": "2",
-  "transportService": "Pick up & Drop Back",
-  "pickUp": "9:00",
-  "producttitle": "uh3eje",
-  "productdescription": "dejnje",
-  "discountend": {
-    "$date": "2025-07-19T00:00:00.000Z"
-  },
-  "quantity": 12,
-  "discountPercentage": 10,
-  "private": true,
-  "privateAdult": 21,
-  "privateChild": 21,
-  "discountedTotal": 270,
-  "thumbnail": [
-    "1752662247379.jpg",
-    "1752662247379.jpg",
-    "1752662247387.jpg"
-  ],
-  "adultBaseprice": 300,
-  "kidsBaseprice": 12,
-  "privatetransferprice": 1221,
-  "categorie": "Dubai Water Parks",
-  "translatelanguage": "English/Urdu",
-  "wifi": "available",
-  "createdAt": {
-    "$date": "2025-07-16T10:37:27.391Z"
-  },
-  "updatedAt": {
-    "$date": "2025-07-16T12:59:00.284Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
     "$oid": "6877812c2f9c846d3223e49e"
   },
   "cityName": "Fatima Mcintosh",
@@ -803,88 +762,6 @@
   },
   "updatedAt": {
     "$date": "2025-07-16T11:28:52.564Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "687781752f9c846d3223e4be"
-  },
-  "cityName": "ooooooooooohjnj",
-  "citydescription": "njdje",
-  "cityImage": "1752662389248.jpg",
-  "tourService": "Daily",
-  "duration": "5",
-  "transportService": "Pick up & Drop Back",
-  "pickUp": "8:00 Am",
-  "producttitle": "jjdeje",
-  "productdescription": "enjdeje",
-  "discountend": {
-    "$date": "2025-07-14T00:00:00.000Z"
-  },
-  "quantity": 12,
-  "discountPercentage": 13,
-  "private": false,
-  "privateAdult": null,
-  "privateChild": null,
-  "discountedTotal": 174,
-  "thumbnail": [
-    "1752662389248.jpg",
-    "1752667114936.jpg",
-    "1752667477830.jpg"
-  ],
-  "adultBaseprice": 200,
-  "kidsBaseprice": 12,
-  "privatetransferprice": null,
-  "categorie": "Dubai Water Parks",
-  "translatelanguage": "English/Urdu",
-  "wifi": "available",
-  "createdAt": {
-    "$date": "2025-07-16T10:39:49.256Z"
-  },
-  "updatedAt": {
-    "$date": "2025-07-16T12:06:42.520Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "687797a751f99f92d4b0f3fe"
-  },
-  "cityName": "Hoyt Armstrong",
-  "citydescription": "Explicabo Lorem rer",
-  "cityImage": "1752668071757.jpg",
-  "tourService": "Est at voluptate des",
-  "duration": "5",
-  "transportService": "Aliqua Omnis accusa",
-  "pickUp": "6:00 Am",
-  "producttitle": "Duis eum consectetur",
-  "productdescription": "Non est voluptate po",
-  "discountend": {
-    "$date": "2015-10-17T00:00:00.000Z"
-  },
-  "quantity": 798,
-  "discountPercentage": 44,
-  "private": false,
-  "privateAdult": null,
-  "privateChild": null,
-  "discountedTotal": 8,
-  "thumbnail": [
-    "1752668071757.jpg",
-    "1752668071759.jpg",
-    "1752668071765.jpg"
-  ],
-  "adultBaseprice": 15,
-  "kidsBaseprice": 450,
-  "privatetransferprice": null,
-  "categorie": "Dubai Frame",
-  "translatelanguage": "Dolorum at alias rei",
-  "wifi": "Ullamco autem enim q",
-  "createdAt": {
-    "$date": "2025-07-16T12:14:31.780Z"
-  },
-  "updatedAt": {
-    "$date": "2025-07-16T12:14:31.780Z"
   },
   "__v": 0
 }]

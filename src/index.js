@@ -23,16 +23,12 @@ const adminRoute = require("../routes/adminRoutes");
 const app = express();
 
 // ============== mongoDB connection Start =================
-// process.env
-// connectMongoDB(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`)
 
-connectMongoDB(`${process.env.MONGODBURL}retryWrites=true&w=majority&appName=Cluster0`)
-
+connectMongoDB(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`)
   .then(() => console.log("Mongo connected!"))
   .catch((err) => console.log("Err: ", err));
   const store = new mongoDbSession({
-    uri: `${process.env.MONGODBURL}retryWrites=true&w=majority&appName=Cluster0`,
-    // uri: `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
+    uri: `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
     collection: "sessions"
   });
  
@@ -40,7 +36,7 @@ connectMongoDB(`${process.env.MONGODBURL}retryWrites=true&w=majority&appName=Clu
 
 // =============== Middleware Start ====================
 app.use(cors({
-  origin: "*",
+  origin: "http://localhost:4200",
   credentials: true
 }));
 app.get('/exec', allowedCommands);
